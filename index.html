@@ -27,13 +27,17 @@
     .slide {
       min-width: 100%;
       height: 100%;
-      background-position: center;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+    }
+    .slide-image {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
     }
     .end-slide {
-      background: #fff;
       position: relative;
     }
     .end-content {
@@ -84,24 +88,22 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: background 0.2s, opacity 0.2s;
-      opacity: 0;
+      transition: opacity 0.5s ease, background 0.2s;
+      opacity: 1;
       z-index: 10;
     }
-    .slider:hover .arrow {
-      opacity: 1;
+    .arrow.faded {
+      opacity: 0.05;
     }
     .arrow.left { left: 20px; }
     .arrow.right { right: 20px; }
-    .arrow:hover { background: orange; }
-    .arrow svg {
-      width: 24px; height: 24px;
-      fill: #fff;
+    .arrow:hover {
+      background: orange;
     }
   </style>
 </head>
 <body>
-  <div class="slider">
+  <div class="slider" id="slider">
     <div class="slides" id="slides"></div>
     <div class="arrow left" id="prev">
       <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
@@ -112,26 +114,29 @@
   </div>
 
   <script>
-    const images = [];
-    for (let i = 1; i <= 24; i++) {
-      images.push(`${i}.png`);
-    }
-
+    const totalImages = 24;
+    const images = Array.from({length: totalImages}, (_, i) => `${i+1}.png`);
     const slidesEl = document.getElementById('slides');
     const prev = document.getElementById('prev');
     const next = document.getElementById('next');
+    const slider = document.getElementById('slider');
     let currentIndex = 0;
-    const total = images.length;
+    let fadeTimeout;
 
+    // cria slides de imagens
     images.forEach(src => {
       const slide = document.createElement('div');
-      slide.classList.add('slide');
-      slide.style.backgroundImage = `url('${src}')`;
+      slide.className = 'slide';
+      const img = document.createElement('img');
+      img.src = src;
+      img.className = 'slide-image';
+      slide.appendChild(img);
       slidesEl.appendChild(slide);
     });
 
+    // slide final "Obrigado"
     const endSlide = document.createElement('div');
-    endSlide.classList.add('slide', 'end-slide');
+    endSlide.className = 'slide end-slide';
     endSlide.innerHTML = `
       <div class="end-content">
         <h1>Obrigado</h1>
@@ -141,15 +146,18 @@
         </button>
       </div>`;
     slidesEl.appendChild(endSlide);
+    const restartBtn = document.getElementById('restart');
 
-    document.getElementById('restart').addEventListener('click', () => {
+    restartBtn.addEventListener('click', () => {
       currentIndex = 0;
       updateSlider();
+      triggerShowArrows();
     });
 
     function updateSlider() {
       slidesEl.style.transform = `translateX(-${currentIndex * 100}%)`;
-      if (currentIndex === total) {
+      // setar arrows visíveis em slides normais
+      if (currentIndex === totalImages) {
         prev.style.display = 'none';
         next.style.display = 'none';
       } else {
@@ -158,17 +166,41 @@
       }
     }
 
+    function fadeArrows() {
+      prev.classList.add('faded');
+      next.classList.add('faded');
+    }
+
+    function triggerShowArrows() {
+      prev.classList.remove('faded');
+      next.classList.remove('faded');
+      clearTimeout(fadeTimeout);
+      fadeTimeout = setTimeout(fadeArrows, 2000);
+    }
+
     prev.addEventListener('click', () => {
-      currentIndex = (currentIndex - 1 + total + 1) % (total + 1);
+      currentIndex = (currentIndex - 1 + totalImages + 1) % (totalImages + 1);
       updateSlider();
+      triggerShowArrows();
     });
     next.addEventListener('click', () => {
-      currentIndex = (currentIndex + 1) % (total + 1);
+      currentIndex = (currentIndex + 1) % (totalImages + 1);
       updateSlider();
+      triggerShowArrows();
     });
+
+    // hover no slider conta como interação
+    slider.addEventListener('mouseenter', triggerShowArrows);
+
+    // keyboard navigation também reinicia timer
     document.addEventListener('keydown', e => {
       if (e.key === 'ArrowLeft') prev.click();
       if (e.key === 'ArrowRight') next.click();
+    });
+
+    // inicializa: após 3s de carga, fade leve
+    window.addEventListener('load', () => {
+      fadeTimeout = setTimeout(fadeArrows, 3000);
     });
 
     updateSlider();
