@@ -10,12 +10,13 @@
       width: 100%; height: 100%;
       overflow: hidden;
       font-family: sans-serif;
+      background: #fff;
     }
     .slider {
       position: relative;
       width: 100%; height: 100vh;
       overflow: hidden;
-      background: #000;
+      background: #fff;
     }
     .slides {
       display: flex;
@@ -27,10 +28,12 @@
       min-width: 100%;
       height: 100%;
       background-position: center;
-      background-size: cover;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-color: #fff;
     }
     .end-slide {
-      background: #000;
+      background: #fff;
       position: relative;
     }
     .end-content {
@@ -41,7 +44,7 @@
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      color: #fff;
+      color: #000;
     }
     .end-content h1 {
       font-size: 3rem;
@@ -55,7 +58,7 @@
       padding: 0.5rem 1rem;
       border-radius: 4px;
       font-size: 1rem;
-      color: #fff;
+      color: #000;
       cursor: pointer;
       transition: background 0.2s, border-color 0.2s;
     }
@@ -68,7 +71,7 @@
     }
     .end-content button svg {
       width: 20px; height: 20px;
-      fill: #fff;
+      fill: #000;
     }
     .arrow {
       position: absolute;
@@ -118,9 +121,8 @@
     const prev = document.getElementById('prev');
     const next = document.getElementById('next');
     let currentIndex = 0;
-    const imagesCount = images.length;
+    const total = images.length;
 
-    // criar slides de imagens
     images.forEach(src => {
       const slide = document.createElement('div');
       slide.classList.add('slide');
@@ -128,7 +130,6 @@
       slidesEl.appendChild(slide);
     });
 
-    // slide final "Obrigado"
     const endSlide = document.createElement('div');
     endSlide.classList.add('slide', 'end-slide');
     endSlide.innerHTML = `
@@ -148,7 +149,7 @@
 
     function updateSlider() {
       slidesEl.style.transform = `translateX(-${currentIndex * 100}%)`;
-      if (currentIndex === imagesCount) {
+      if (currentIndex === total) {
         prev.style.display = 'none';
         next.style.display = 'none';
       } else {
@@ -158,11 +159,11 @@
     }
 
     prev.addEventListener('click', () => {
-      currentIndex = (currentIndex - 1 + imagesCount + 1) % (imagesCount + 1);
+      currentIndex = (currentIndex - 1 + total + 1) % (total + 1);
       updateSlider();
     });
     next.addEventListener('click', () => {
-      currentIndex = (currentIndex + 1) % (imagesCount + 1);
+      currentIndex = (currentIndex + 1) % (total + 1);
       updateSlider();
     });
     document.addEventListener('keydown', e => {
