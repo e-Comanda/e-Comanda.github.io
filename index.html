@@ -94,7 +94,7 @@
       touch-action: none;
     }
     .arrow.faded {
-      opacity: 0.05;
+      opacity: 0;
     }
     .arrow.left { left: 20px; }
     .arrow.right { right: 20px; }
@@ -129,7 +129,6 @@
     let currentIndex = 0;
     let fadeTimeout;
 
-    // cria slides com <img>
     images.forEach(src => {
       const slide = document.createElement('div');
       slide.className = 'slide';
@@ -140,7 +139,6 @@
       slidesEl.appendChild(slide);
     });
 
-    // slide final "Obrigado"
     const endSlide = document.createElement('div');
     endSlide.className = 'slide end-slide';
     endSlide.innerHTML = `
@@ -194,15 +192,12 @@
       triggerShowArrows();
     });
 
-    // navegação por clique/touch na metade da tela
     slider.addEventListener('pointerdown', e => {
-      // ignora se clicou na seta ou no botão final
       if (e.target.closest('.arrow') || e.target.closest('.end-content')) return;
       if (e.clientX > slider.clientWidth / 2) next.click();
       else prev.click();
     });
 
-    // hover (desktop) também mostra as setas
     slider.addEventListener('mouseenter', triggerShowArrows);
     document.addEventListener('keydown', e => {
       if (e.key === 'ArrowLeft') prev.click();
