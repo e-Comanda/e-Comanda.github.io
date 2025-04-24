@@ -55,7 +55,7 @@
 <body>
   <div class="slider">
     <div class="slides" id="slides"></div>
-    <div class="arrow left"  id="prev">
+    <div class="arrow left" id="prev">
       <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
     </div>
     <div class="arrow right" id="next">
@@ -64,19 +64,19 @@
   </div>
 
   <script>
-    const folder = 'imagens/';
+    // As 24 imagens estão na mesma pasta do index.html como "1.png" até "24.png"
     const images = [];
     for (let i = 1; i <= 24; i++) {
-      images.push(`${folder}${i}.png`);
+      images.push(`${i}.png`);
     }
 
     const slidesEl = document.getElementById('slides');
     let currentIndex = 0;
 
-    images.forEach(url => {
+    images.forEach(src => {
       const slide = document.createElement('div');
       slide.classList.add('slide');
-      slide.style.backgroundImage = `url('${url}')`;
+      slide.style.backgroundImage = `url('${src}')`;
       slidesEl.appendChild(slide);
     });
 
@@ -92,6 +92,7 @@
       currentIndex = (currentIndex + 1) % images.length;
       updateSlider();
     });
+
     document.addEventListener('keydown', e => {
       if (e.key === 'ArrowLeft')  document.getElementById('prev').click();
       if (e.key === 'ArrowRight') document.getElementById('next').click();
