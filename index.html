@@ -123,7 +123,6 @@
     let currentIndex = 0;
     let fadeTimeout;
 
-    // cria slides de imagens
     images.forEach(src => {
       const slide = document.createElement('div');
       slide.className = 'slide';
@@ -134,7 +133,6 @@
       slidesEl.appendChild(slide);
     });
 
-    // slide final "Obrigado"
     const endSlide = document.createElement('div');
     endSlide.className = 'slide end-slide';
     endSlide.innerHTML = `
@@ -146,9 +144,8 @@
         </button>
       </div>`;
     slidesEl.appendChild(endSlide);
-    const restartBtn = document.getElementById('restart');
 
-    restartBtn.addEventListener('click', () => {
+    document.getElementById('restart').addEventListener('click', () => {
       currentIndex = 0;
       updateSlider();
       triggerShowArrows();
@@ -156,7 +153,6 @@
 
     function updateSlider() {
       slidesEl.style.transform = `translateX(-${currentIndex * 100}%)`;
-      // setar arrows visíveis em slides normais
       if (currentIndex === totalImages) {
         prev.style.display = 'none';
         next.style.display = 'none';
@@ -189,16 +185,12 @@
       triggerShowArrows();
     });
 
-    // hover no slider conta como interação
     slider.addEventListener('mouseenter', triggerShowArrows);
-
-    // keyboard navigation também reinicia timer
     document.addEventListener('keydown', e => {
       if (e.key === 'ArrowLeft') prev.click();
       if (e.key === 'ArrowRight') next.click();
     });
 
-    // inicializa: após 3s de carga, fade leve
     window.addEventListener('load', () => {
       fadeTimeout = setTimeout(fadeArrows, 3000);
     });
